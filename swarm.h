@@ -1,16 +1,22 @@
 #include <iostream>
 #include <cmath>
+#include <thrust>
 #include "particle.h"
-
 
 class Swarm
 {
+	
 	const int objects_count;
 	double global_opt;
-	Particle* pat; 
+
+	parameters pars;
+thrust::host_vector<Particle> pat;
 
 public:
-	Swarm();
+	Swarm(int n);
+
+	void updateOptimum(double p);
+
 	~Swarm();
 	
 };
