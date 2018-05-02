@@ -23,7 +23,7 @@ void VertexBuffer::unbind(){
 }
 
 void VertexBuffer::setData(unsigned size, const void* ptr, GLenum usage){
-	glBufferData(target, size, ptr, usage);
+	glBufferData(target, size * sizeof(uchar4), ptr, usage);
 }
 
 

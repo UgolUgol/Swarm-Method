@@ -30,7 +30,7 @@ __global__ void kernel(uchar4 *data, double t, int w, int h) {
 }
 
 
-// =============================================================
+// ================================================================
 /*GlutWrapper* class_ptr;
 extern "C"{
 	void update_callback(){
@@ -42,7 +42,14 @@ extern "C"{
 	}
 }
 */
+
+// =============================================
+
+VertexBuffer* vbo;
+CudaBuffer* buffer = nullptr;
 GlutWrapper* GlutWrapper::class_ptr = nullptr;
+
+// ==============================================
 
 GlutWrapper::GlutWrapper(){
 
@@ -59,6 +66,14 @@ GlutWrapper::GlutWrapper(int argc, char** argv, int w, int h,
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(this->w, this->h);
 	glutCreateWindow(this->name);
+}
+
+void GlutWrapper::createVertexBuffer(){
+	vbo = new VertexBuffer();
+
+	vbo->bind(GL_PIXEL_PACK_BUFFER_ARB);
+	vbo->setData(w*h, NULL, GL_DYNAMIC_DRAW);
+	vbo->unbind();
 }
 
 
@@ -110,7 +125,8 @@ void GlutWrapper::glutSetProjection(GLenum mode){
 
 
 void GlutWrapper::glutRunSession(){
-	buffer = new CudaBuffer(w*h, GL_PIXEL_PACK_BUFFER_ARB);
+	createVertexBuffer();
+	buffer = new CudaBuffer(vbo, GL_ARRAY_BUFFER);
 }
 
 

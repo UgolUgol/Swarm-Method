@@ -7,7 +7,6 @@ class GlutWrapper {
 	int h;
 	const char* name;
 	static GlutWrapper* class_ptr;
-	CudaBuffer* buffer;
 
 	void update();
 	void display();
@@ -18,6 +17,7 @@ class GlutWrapper {
 	void glutRunningFuncs();
 	void glutSetProjection(GLenum mode);
 	void glutRunSession();
+	void createVertexBuffer();
 
 public:
 	GlutWrapper();
