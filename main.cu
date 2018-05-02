@@ -1,9 +1,17 @@
-#include "particle.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "glutWrapper.h"
+using namespace std;
 
-int main( int argc, char *argv[] )
+
+
+const int w = 1024;
+const int h = 648;
+
+
+int main( int argc, char **argv )
 {
-   glutInit(&amp, argc, argv);
-   glutInitWindowSize(100, 100);
-
-   return 0;
+	GlutWrapper glut(argc, argv, w, h, "App");
+	glut.renderCycle();
+	return 0;
 }
