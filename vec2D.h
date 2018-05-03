@@ -5,8 +5,10 @@ struct vec2D {
 	double x;
 	double y;
 
-	vec2D(){}
-	vec2D(double x, double y){
+	__host__ __device__ vec2D(){
+
+	}
+	__host__ __device__ vec2D(double x, double y){
 		this->x = x;
 		this->y = y;
 	}
@@ -15,4 +17,6 @@ struct vec2D {
 		os<<a.x<<" "<<a.y<<endl;
 		return os;
 	};
+	
+
 };

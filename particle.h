@@ -14,17 +14,13 @@ struct parameters{
 
 class Particle
 {
-	vec2D position;
-	vec2D speed;
 	vec2D local_opt;
 public:
-	Particle();
+	vec2D position;
+	vec2D speed;
+	__host__ __device__ Particle();
 
+	__host__ __device__ void init(vec2D opt);
 	vec2D getLocalOptimum();
-	vec2D genPosition();
-	// void changePosition();
-	// void changeSpeed(double parameters, double g);
-
-	~Particle();
 };
 

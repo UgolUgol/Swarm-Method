@@ -1,16 +1,16 @@
 #include "CudaBuffer.h"
 #include <iostream>
 
-CudaBuffer::CudaBuffer(int size, 
+CudaBuffer::CudaBuffer(unsigned size, 
 	GLenum targ, unsigned int flags){
 	
 	buffer = new VertexBuffer();
 	target = targ;
 
 	buffer->bind(target);
-	//buffer->setData(size, NULL, GL_DYNAMIC_DRAW);
+	buffer->setData(size, NULL, GL_DYNAMIC_DRAW);
 	cudaGraphicsGLRegisterBuffer(&resource, buffer->getId(), flags);
-	buffer->unbind();
+	//buffer->unbind();
 }
 
 CudaBuffer::~CudaBuffer(){

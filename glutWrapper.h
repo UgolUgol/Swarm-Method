@@ -2,14 +2,11 @@
 using namespace std;
 
 
-class GlutWrapper {
-	int w;
-	int h;
-	const char* name;
-	static GlutWrapper* class_ptr;
-	CudaBuffer* buffer;
+/* glutWrapper makes only rendering*/
 
-	void update();
+class GlutWrapper {
+	static GlutWrapper* class_ptr;
+
 	void display();
 
 	static void update_callback();
@@ -18,6 +15,19 @@ class GlutWrapper {
 	void glutRunningFuncs();
 	void glutSetProjection(GLenum mode);
 	void glutRunSession();
+
+protected: 
+	int w;
+	int h;
+	
+	double xc;
+	double yc;
+	double sx;
+	double sy;
+
+	const char* name;
+	CudaBuffer* buffer;
+	virtual void update() = 0;
 
 public:
 	GlutWrapper();

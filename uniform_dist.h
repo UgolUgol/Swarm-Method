@@ -1,13 +1,15 @@
-#include <random>
+#include <curand.h>
+#include <curand_kernel.h>
 #include "vec2D.h"
 
+
+
+
 class UniformDist {
-	uniform_real_distribution<> distrib;
-	mt19937 gen;
-	random_device rd;
+	curandState* state;
+	const double fix = 0.999999;
 public:
-	UniformDist();
-	UniformDist(double low, double high);
-	vec2D generate();
-	~UniformDist();
+	UniformDist(size_t count);
+
+	__device__ vec2D generate(const int max, const int min, int idx);
 };
