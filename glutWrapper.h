@@ -24,6 +24,7 @@ protected:
 	double yc;
 	double sx;
 	double sy;
+	double dt;
 
 	const char* name;
 	CudaBuffer* buffer;

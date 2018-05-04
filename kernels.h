@@ -134,7 +134,7 @@ __global__ void drawParticles(uchar4* data, Particle* pat, int w, int h,
 }
 
 
-__global__ void regenerate(Particle* pat, int n, UniformDist* gen, vec2D* gptr){
+__global__ void regenerate(Particle* pat, int n, UniformDist* gen, vec2D* gptr, double dt){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
 	vec2D x = pat[idx].position;
@@ -147,7 +147,7 @@ __global__ void regenerate(Particle* pat, int n, UniformDist* gen, vec2D* gptr){
 	vec2D r2 = gen->generate(0, 1, idx);
 
 // calculate new speed
-	pat[idx].speed = 0.99 * v + (0.5 * r1) * (p - x) + (0.7 * r2) * (g - x);
+	pat[idx].speed = 0.99 * v + dt * ((0.5 * r1) * (p - x) + (0.7 * r2) * (g - x));
 
 // new position
 	pat[idx].position = pat[idx].position + pat[idx].speed;

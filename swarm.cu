@@ -62,7 +62,7 @@ void Swarm::regenPoints(){
 	vec2D* g = thrust::raw_pointer_cast(global_opt);
 
 // calculate new position
-	regenerate<<<sq_count, sq_count>>>(points, objects_count, dev_gen, g);
+	regenerate<<<sq_count, sq_count>>>(points, objects_count, dev_gen, g, dt);
 
 }
 
@@ -86,7 +86,7 @@ void Swarm::update() {
 	CSC(cudaGetLastError());
 	buffer->unmapResource();
 
-	t += 0.05;
+	t += dt;
 	glutPostRedisplay();
 }
 
