@@ -1,4 +1,5 @@
 #include "swarm.h"
+#include "kernels.h"
 #include <iostream>
 using namespace std;
 

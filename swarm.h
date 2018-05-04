@@ -7,7 +7,6 @@
 #include <thrust/copy.h>
 #include "particle.h"
 #include "glutWrapper.h"
-#include "kernels.h"
 
 class Swarm : protected GlutWrapper{
 	int objects_count;
