@@ -1,27 +1,32 @@
 #include <stdlib.h>
-
+#include <cmath>
 
 const double pi = 3.141592653;
 const double e = 2.7182818284;
 // ========== KERNELS ========================== //
 
-__global__ void generate_parameters(Particle* parts, int n, UniformDist* gen){
+__host__ __device__ double F(vec2D v) {
+	return -20. * exp(-.2 * sqrt(.5 * (pow(v.x, 2) + pow(v.y, 2) ) ) ) - 
+			exp(.5 * (cos(2 * 3.14 * v.x) + cos(2 * 3.14 * v.y))) + 2.71 + 20;
+}
+
+__global__ void generate_parameters(Particle* parts, int n, UniformDist* gen, vec2D* gptr){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int offsetx = blockDim.x * gridDim.x;
 	const int max = 4;
 	const int low = -4;
+	vec2D g = gptr[0];
 
 	for(int i = idx; i < n; i += offsetx){
 		parts[i].position = gen->generate(low, max, idx);
 		parts[i].speed = gen->generate(-(max - low), (max - low), idx);
 		parts[i].init(parts[i].position);
+		
+		if(F(parts[i].local_opt) < F(g)) {
+			gptr[0] = parts[i].local_opt;
+		}
 	}
-}
 
-
-__host__ __device__ double F(vec2D v) {
-	return -20. * exp(-.2 * sqrt(.5 * (pow(v.x, 2) + pow(v.y, 2) ) ) ) - 
-			exp(.5 * (cos(2 * 3.14 * v.x) + cos(2 * 3.14 * v.y))) + 2.71 + 20;
 }
 
 __device__ double ptox(int i, int w){
@@ -134,23 +139,30 @@ __global__ void drawParticles(uchar4* data, Particle* pat, int w, int h,
 }
 
 
-__global__ void regenerate(Particle* pat, int n, UniformDist* gen, vec2D* gptr, double dt){
+__global__ void forceCalculate(Particle* pat, int n, vec2D* force){
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	force[i] = vec2D(0, 0);
+
+
+	for(int j = 0; j < n; j++){
+		if(i != j){
+			vec2D dist = pat[i].position - pat[j].position;
+			force[i] = force[i] + 1./pow(dist.length(), 2) * dist;
+		}
+	}
+}
+
+__global__ void regenerate(Particle* pat, int n, vec2D* force, UniformDist* gen, vec2D* gptr, double dt){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	double G = 1e-2;
 
 	vec2D x = pat[idx].position;
 	vec2D v = pat[idx].speed;
 	vec2D p = pat[idx].local_opt;
 	vec2D g = gptr[0];
 
-// create random vector
-	vec2D r1 = gen->generate(0, 1, idx);
-	vec2D r2 = gen->generate(0, 1, idx);
-
-// calculate new speed
-	pat[idx].speed = 0.99 * v + dt * ((0.5 * r1) * (p - x) + (0.7 * r2) * (g - x));
-
 // new position
-	pat[idx].position = pat[idx].position + pat[idx].speed;
+	pat[idx].position = x + dt * (v + dt * G * force[idx]);
 
 // check local optimum
 	if(F(pat[idx].position) < F(p)){
@@ -162,5 +174,14 @@ __global__ void regenerate(Particle* pat, int n, UniformDist* gen, vec2D* gptr, 
 		gptr[0] = pat[idx].local_opt;
 	}
 
+// create random vector
+	vec2D r1 = gen->generate(0, 1, idx);
+	vec2D r2 = gen->generate(0, 1, idx);
+
+// calculate next speed
+	pat[idx].speed = 0.99 * v + dt * ((0.5 * r1) * (p - x) + (0.7 * r2) * (g - x));
+
 }
+
+
 // ============================================= //

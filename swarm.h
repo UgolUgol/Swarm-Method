@@ -14,6 +14,7 @@ class Swarm : protected GlutWrapper{
 
 	thrust::host_vector<Particle> host_objects;
 	thrust::device_vector<Particle> device_objects;
+	thrust::device_vector<vec2D> forces;
 	thrust::device_ptr<vec2D> global_opt;
 
 protected:

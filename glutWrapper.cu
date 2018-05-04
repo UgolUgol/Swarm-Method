@@ -17,7 +17,7 @@ GlutWrapper::GlutWrapper(int argc, char** argv, int w, int h,
 	this->name = name;
 	this->dt = 0.01;
 	class_ptr = this;
-	xc = 0.0, yc = 0.0, sx = 10.0, sy = sx * h / w;
+	xc = 0.0, yc = 0.0, sx = 5.0, sy = sx * h / w;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);

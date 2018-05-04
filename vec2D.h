@@ -13,6 +13,10 @@ struct vec2D {
 		this->y = y;
 	}
 
+	__host__ __device__ double length(){
+		return x*x + y*y;
+	}
+
 	__host__ __device__ friend vec2D operator*(vec2D a, vec2D b){
 		vec2D c = vec2D(a.x * b.x, a.y * b.y);
 		return c;
