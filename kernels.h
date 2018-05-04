@@ -1,5 +1,8 @@
 #include <stdlib.h>
 
+
+const double pi = 3.141592653;
+const double e = 2.7182818284;
 // ========== KERNELS ========================== //
 
 __global__ void generate_parameters(Particle* parts, int n, UniformDist* gen){

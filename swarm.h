@@ -7,9 +7,7 @@
 #include <thrust/copy.h>
 #include "particle.h"
 #include "glutWrapper.h"
-
-const double pi = 3.141592653;
-const double e = 2.7182818284;
+#include "kernels.h"
 
 class Swarm : protected GlutWrapper{
 	int objects_count;
@@ -30,7 +28,7 @@ public:
 	void fillBackground(uchar4* data);
 	void addPoints(uchar4* data);
 	void regenPoints();
-	
+
 	void correctParticlesCount();
 	void update();
 	double F(vec2D vec);
