@@ -5,8 +5,8 @@
 __global__ void generate_parameters(Particle* parts, int n, UniformDist* gen){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int offsetx = blockDim.x * gridDim.x;
-	const int max = 3;
-	const int low = -3;
+	const int max = 4;
+	const int low = -4;
 
 	for(int i = idx; i < n; i += offsetx){
 		parts[i].position = gen->generate(low, max, idx);
@@ -16,9 +16,9 @@ __global__ void generate_parameters(Particle* parts, int n, UniformDist* gen){
 }
 
 
-__host__ __device__ double F(double x, double y) {
-	return -20. * exp(-.2 * sqrt(.5 * (pow(x, 2) + pow(y, 2) ) ) ) - 
-			exp(.5 * (cos(2 * 3.14 * x) + cos(2 * 3.14 * y))) + 2.71 + 20;
+__host__ __device__ double F(vec2D v) {
+	return -20. * exp(-.2 * sqrt(.5 * (pow(v.x, 2) + pow(v.y, 2) ) ) ) - 
+			exp(.5 * (cos(2 * 3.14 * v.x) + cos(2 * 3.14 * v.y))) + 2.71 + 20;
 }
 
 __device__ double ptox(int i, int w){
@@ -80,7 +80,9 @@ __global__ void background(uchar4 *data, int w, int h,
 		for(int j = idy; j < h; j += offsety) {
 			double x = ptox(i, w);
 			double y = ptoy(j, h);
-			double f = F(xc + sx * x, yc + sy * y);
+			vec2D v = vec2D(xc + sx*x, yc + sy*y);
+
+			double f = F(v);
 			cmap = color_map(f);
 			data[j * w + i] = cmap;
 		}
@@ -92,22 +94,26 @@ __device__ bool is_visible_point(int i, int j, int w, int h){
 }
 
 
-__device__ void drawParticle(uchar4* data, int i, int j, int w){
+__device__ void drawParticle(uchar4* data, int i, int j, int w, int h){
 	
 	// center
 	data[j * w + i] = make_uchar4(0, 0, 0, 255);
 	
 	// up
-	data[(j+1) * w + i] = make_uchar4(0, 0, 0, 255);
+	if(j + 1 < h)
+		data[(j+1) * w + i] = make_uchar4(0, 0, 0, 255);
 	
 	// right
-	data[j * w + (i+1)] = make_uchar4(0, 0, 0, 255);
+	if(i + 1 < w)
+		data[j * w + (i+1)] = make_uchar4(0, 0, 0, 255);
 
 	// down
-	data[(j-1) * w + i] = make_uchar4(0, 0, 0, 255);
+	if(j - 1 >= 0)
+		data[(j-1) * w + i] = make_uchar4(0, 0, 0, 255);
 
 	// left
-	data[j * w + (i-1)] = make_uchar4(0, 0, 0, 255);
+	if(i - 1 >= 0)
+		data[j * w + (i-1)] = make_uchar4(0, 0, 0, 255);
 
 }
 
@@ -120,8 +126,38 @@ __global__ void drawParticles(uchar4* data, Particle* pat, int w, int h,
 	int j = ytop(pat[idx].position.y, h, yc, sy);
 	
 	if(is_visible_point(i, j, w, h)){
-		drawParticle(data, i, j, w);
+		drawParticle(data, i, j, w, h);
 	}
 }
 
+
+__global__ void regenerate(Particle* pat, int n, UniformDist* gen, vec2D* gptr){
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	vec2D x = pat[idx].position;
+	vec2D v = pat[idx].speed;
+	vec2D p = pat[idx].local_opt;
+	vec2D g = gptr[0];
+
+// create random vector
+	vec2D r1 = gen->generate(0, 1, idx);
+	vec2D r2 = gen->generate(0, 1, idx);
+
+// calculate new speed
+	pat[idx].speed = 0.99 * v + (0.5 * r1) * (p - x) + (0.7 * r2) * (g - x);
+
+// new position
+	pat[idx].position = pat[idx].position + pat[idx].speed;
+
+// check local optimum
+	if(F(pat[idx].position) < F(p)){
+		pat[idx].local_opt = pat[idx].position;
+	}
+
+// check global optimum
+	if(F(pat[idx].local_opt) < F(g)) {
+		gptr[0] = pat[idx].local_opt;
+	}
+
+}
 // ============================================= //

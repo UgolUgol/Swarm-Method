@@ -14,11 +14,11 @@ const double e = 2.7182818284;
 class Swarm : protected GlutWrapper{
 	int objects_count;
 	int sq_count;
-	vec2D global_opt;
 
-	parameters pars;
 	thrust::host_vector<Particle> host_objects;
 	thrust::device_vector<Particle> device_objects;
+	thrust::device_ptr<vec2D> global_opt;
+
 protected:
 	UniformDist* generator;
 public:
@@ -27,7 +27,10 @@ public:
 
 
 	void run();
-	void updateOptimum(vec2D p);
+	void fillBackground(uchar4* data);
+	void addPoints(uchar4* data);
+	void regenPoints();
+	
 	void correctParticlesCount();
 	void update();
 	double F(vec2D vec);

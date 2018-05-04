@@ -15,7 +15,7 @@ UniformDist::UniformDist(size_t count){
 	initRandomizer<<<count, count>>>(time(NULL), state);
 }
 
-__device__ vec2D UniformDist::generate(const int max, const int min, int idx){
+__device__ vec2D UniformDist::generate(const int min, const int max, int idx){
 	double x = curand_uniform(&state[idx]);
 	double y = curand_uniform(&state[idx]);
 	const int diff = max - min + fix;

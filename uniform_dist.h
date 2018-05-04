@@ -11,5 +11,5 @@ class UniformDist {
 public:
 	UniformDist(size_t count);
 
-	__device__ vec2D generate(const int max, const int min, int idx);
+	__device__ vec2D generate(const int min, const int max, int idx);
 };

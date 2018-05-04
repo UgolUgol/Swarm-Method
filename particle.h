@@ -5,22 +5,15 @@
 
 using namespace std;
 
-struct parameters{
-	double a;
-	double b;
-	double w;
-};
-
-
-class Particle
-{
-	vec2D local_opt;
+class Particle {
 public:
+	vec2D local_opt;
 	vec2D position;
 	vec2D speed;
+
 	__host__ __device__ Particle();
 
 	__host__ __device__ void init(vec2D opt);
-	vec2D getLocalOptimum();
+	__host__ __device__ vec2D getLocalOptimum();
 };
 
