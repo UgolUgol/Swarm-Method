@@ -16,11 +16,11 @@ Controller::Controller(int w, int h){
 void Controller::zoom(unsigned char key){
 
 	if(key == '+'){
-		this->sx -= 0.01;
+		this->sx -= 0.03;
 		this->sy = sx * h / w;
 	}
 	if(key == '-'){
-		this->sx += 0.01;
+		this->sx += 0.03;
 		this->sy = sx * h / w;
 	}
 	

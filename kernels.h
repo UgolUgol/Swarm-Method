@@ -13,8 +13,8 @@ __host__ __device__ double F(vec2D v) {
 __global__ void generate_parameters(Particle* parts, int n, UniformDist* gen, vec2D* gptr){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int offsetx = blockDim.x * gridDim.x;
-	const int max = 20;
-	const int low = 10;
+	const int max = -10;
+	const int low = -20;
 	vec2D g = gptr[0];
 
 	for(int i = idx; i < n; i += offsetx){
