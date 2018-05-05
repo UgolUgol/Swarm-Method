@@ -9,7 +9,7 @@ clean:
 	rm -rf main *.o
 
 main: 
-	$(CC) $(CFLAGS) $(GLUTFOLD) main.cu swarm.cu particle.cu uniform_dist.cu glutWrapper.cu CudaBuffer.cu VertexBuffer.cu $(GLUT) -o main
+	$(CC) $(CFLAGS) $(GLUTFOLD) main.cu controller.cu swarm.cu particle.cu uniform_dist.cu glutWrapper.cu CudaBuffer.cu VertexBuffer.cu $(GLUT) -o main
 
 # vertex.o: VertexBuffer.cu
 # 	$(CC) $(CFLAGS) -c VertexBuffer.cu

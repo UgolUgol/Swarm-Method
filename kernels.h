@@ -13,8 +13,8 @@ __host__ __device__ double F(vec2D v) {
 __global__ void generate_parameters(Particle* parts, int n, UniformDist* gen, vec2D* gptr){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int offsetx = blockDim.x * gridDim.x;
-	const int max = 4;
-	const int low = -4;
+	const int max = 20;
+	const int low = 10;
 	vec2D g = gptr[0];
 
 	for(int i = idx; i < n; i += offsetx){
@@ -38,11 +38,11 @@ __device__ double ptoy(int j, int h){
 }
 
 __device__ int xtop(double x, int w, double xc, double sx){
-	return (((x / sx + xc) + 1)) * (w - 1) / 2;
+	return (((x / sx) + 1)) * (w - 1) / 2;
 }
 
 __device__ int ytop(double y, int h, double yc, double sy){
-	return (((y / sy + yc) + 1)) * (h - 1) / 2;
+	return (((y / sy) + 1)) * (h - 1) / 2;
 }
 
 __device__ uchar4 color_map(double f){
@@ -152,7 +152,7 @@ __global__ void forceCalculate(Particle* pat, int n, vec2D* force){
 	}
 }
 
-__global__ void regenerate(Particle* pat, int n, vec2D* force, UniformDist* gen, vec2D* gptr, double dt){
+__global__ void regenerate(Particle* pat, int n, vec2D* force, UniformDist* gen, UniformDist* hgen, vec2D* gptr, double dt){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	double G = 1e-2;
 
@@ -176,12 +176,45 @@ __global__ void regenerate(Particle* pat, int n, vec2D* force, UniformDist* gen,
 
 // create random vector
 	vec2D r1 = gen->generate(0, 1, idx);
-	vec2D r2 = gen->generate(0, 1, idx);
+	vec2D r2 = hgen->generate(0, 1, idx);
 
 // calculate next speed
 	pat[idx].speed = 0.99 * v + dt * ((0.5 * r1) * (p - x) + (0.7 * r2) * (g - x));
 
 }
-
-
 // ============================================= //
+
+
+
+// =================== Comparators ============= // 
+
+struct _cmp_xmax{
+	__device__ bool operator()(Particle a, Particle b){
+		return a.position.x > b.position.x;
+	}
+};
+
+struct _cmp_ymax{
+	__device__ bool operator()(Particle a, Particle b){
+		return a.position.y > b.position.y;
+	}
+};
+
+struct _cmp_xmin{
+	__device__ bool operator()(Particle a, Particle b){
+		return a.position.x < b.position.x;
+	}
+};
+
+struct _cmp_ymin{
+	__device__ bool operator()(Particle a, Particle b){
+		return a.position.y < b.position.y;
+	}
+};
+
+_cmp_xmax cmp_xmax;
+_cmp_ymax cmp_ymax;
+_cmp_xmin cmp_xmin;
+_cmp_ymin cmp_ymin;
+
+// ============================================== //

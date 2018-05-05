@@ -11,13 +11,9 @@ GlutWrapper::GlutWrapper(){
 }
 
 GlutWrapper::GlutWrapper(int argc, char** argv, int w, int h,
- const char* name){
-	this->w = w;
-	this->h = h;
+ const char* name) : Controller(w, h) {
 	this->name = name;
-	this->dt = 0.01;
 	class_ptr = this;
-	xc = 0.0, yc = 0.0, sx = 5.0, sy = sx * h / w;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -32,7 +28,6 @@ void GlutWrapper::display(){
 	glutSwapBuffers();
 }
 
-
 void GlutWrapper::update_callback(){
 	class_ptr->update();
 }
@@ -41,9 +36,18 @@ void GlutWrapper::display_callback(){
 	class_ptr->display();
 }
 
+void GlutWrapper::keys_callback(unsigned char key, int x, int y){
+
+// run controller
+	class_ptr->keys(key, x, y);
+
+}
+
+
 void GlutWrapper::glutRunningFuncs(){
 	glutIdleFunc(update_callback);	
 	glutDisplayFunc(display_callback);
+	glutKeyboardFunc(keys_callback);
 }
 
 
@@ -67,6 +71,7 @@ void GlutWrapper::renderCycle(){
 	glutRunSession();
 	glutMainLoop();
 }
+
 
 GlutWrapper::~GlutWrapper(){
 

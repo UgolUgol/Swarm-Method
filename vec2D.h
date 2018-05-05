@@ -1,3 +1,6 @@
+#ifndef VEC2D 
+#define VEC2D 
+
 #include <iostream>
 using namespace std;
 
@@ -45,3 +48,5 @@ struct vec2D {
 	
 
 };
+
+#endif 

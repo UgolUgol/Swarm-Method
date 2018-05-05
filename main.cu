@@ -11,7 +11,7 @@ const int h = 648;*/
 
 int main( int argc, char **argv )
 {
-	Swarm obj(800, argc, argv);
+	Swarm obj(1000, argc, argv);
 	obj.run();
 	return 0;
 }

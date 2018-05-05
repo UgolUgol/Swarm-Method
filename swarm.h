@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <thrust/extrema.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include <thrust/generate.h>
@@ -19,6 +20,8 @@ class Swarm : protected GlutWrapper{
 
 protected:
 	UniformDist* generator;
+	UniformDist* help_generator;
+	Controller control;
 public:
 	Swarm();
 	Swarm(int n, int argc, char** argv);
@@ -29,6 +32,7 @@ public:
 	void addPoints(uchar4* data);
 	void regenPoints();
 
+	vec2D findMassCenter();
 	void correctParticlesCount();
 	void update();
 	double F(vec2D vec);
