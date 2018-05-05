@@ -5,7 +5,11 @@ class CudaBuffer {
 	GLenum target;
 	struct cudaGraphicsResource* resource;
 public:
+<<<<<<< HEAD
 	CudaBuffer(VertexBuffer* buf, GLenum targ,
+=======
+	CudaBuffer(unsigned size, GLenum targ,
+>>>>>>> beta
 	 unsigned int flags=cudaGraphicsMapFlagsWriteDiscard);
 
 	~CudaBuffer();

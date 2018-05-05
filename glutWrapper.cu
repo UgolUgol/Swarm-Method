@@ -1,9 +1,9 @@
 #include "glutWrapper.h"
 #include <iostream>
 
- // KERNELS =====================================================
-const double minf = -3.0, maxf = 3.0;
+ //======================KERNESL=================================
 
+<<<<<<< HEAD
 __device__ double ff(double x, double y, double t) {
 	return sin(x * x + t) + cos(y * y + 0.6 * t) + sin(x * x + y * y + 0.3 * t);
 }
@@ -47,6 +47,9 @@ extern "C"{
 
 VertexBuffer* vbo;
 CudaBuffer* buffer = nullptr;
+=======
+//================================================================
+>>>>>>> beta
 GlutWrapper* GlutWrapper::class_ptr = nullptr;
 
 // ==============================================
@@ -60,7 +63,9 @@ GlutWrapper::GlutWrapper(int argc, char** argv, int w, int h,
 	this->w = w;
 	this->h = h;
 	this->name = name;
+	this->dt = 0.01;
 	class_ptr = this;
+	xc = 0.0, yc = 0.0, sx = 5.0, sy = sx * h / w;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -68,6 +73,7 @@ GlutWrapper::GlutWrapper(int argc, char** argv, int w, int h,
 	glutCreateWindow(this->name);
 }
 
+<<<<<<< HEAD
 void GlutWrapper::createVertexBuffer(){
 	vbo = new VertexBuffer();
 
@@ -93,6 +99,8 @@ void GlutWrapper::update(){
 
 
 
+=======
+>>>>>>> beta
 void GlutWrapper::display(){
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -125,8 +133,12 @@ void GlutWrapper::glutSetProjection(GLenum mode){
 
 
 void GlutWrapper::glutRunSession(){
+<<<<<<< HEAD
 	createVertexBuffer();
 	buffer = new CudaBuffer(vbo, GL_ARRAY_BUFFER);
+=======
+	buffer = new CudaBuffer(w * h * sizeof(uchar4), GL_PIXEL_UNPACK_BUFFER_ARB);
+>>>>>>> beta
 }
 
 
